@@ -202,8 +202,29 @@ class Product
     }
 
     /**
-     * @return \AppBundle\Entity\Category
+     * Set categoryId
+     *
+     * @param integer $categoryId
+     *
+     * @return Product
      */
+    public function setCategoryId($categoryId)
+    {
+        $this->categoryId = $categoryId;
+
+        return $this;
+    }
+
+    /**
+     * Get categoryId
+     *
+     * @return int
+     */
+    public function getCategoryId()
+    {
+        return $this->categoryId;
+    }
+
     public function getCategory(){
         return $this->category;
     }

@@ -1,45 +1,41 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Categories list</h1>
-
-    <table>
+    <h1>Categorías</h1>
+    <br />
+    {% for label, messages in app.flashes %}
+        {% for message in messages %}
+            <div class="alert alert-{{ label }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endfor %}
+    <br />
+    <a class="btn btn-primary" href="{{ path('category_new') }}">Nueva categoría</a>
+    <hr />
+    <table class="table table-hover">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Active</th>
-                <th>Actions</th>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Activo</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
         {% for category in categories %}
             <tr>
-                <td><a href="{{ path('category_show', { 'id': category.id }) }}">{{ category.id }}</a></td>
                 <td>{{ category.code }}</td>
                 <td>{{ category.name }}</td>
                 <td>{{ category.description }}</td>
-                <td>{% if category.active %}Yes{% else %}No{% endif %}</td>
+                <td>{% if category.active %}Sí{% else %}No{% endif %}</td>
                 <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('category_show', { 'id': category.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('category_edit', { 'id': category.id }) }}">edit</a>
-                        </li>
-                    </ul>
+                    <a class="btn btn-primary" href="{{ path('category_active', { 'id': category.id }) }}">Activar / Desactivar</a>
+                    <a class="btn btn-primary" href="{{ path('category_edit', { 'id': category.id }) }}">Editar</a>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
-
-    <ul>
-        <li>
-            <a href="{{ path('category_new') }}">Create a new category</a>
-        </li>
-    </ul>
 {% endblock %}

@@ -45,6 +45,7 @@ class ProductController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $product = $form->getData();
             $em = $this->getDoctrine()->getManager();
             $em->persist($product);
             $em->flush();

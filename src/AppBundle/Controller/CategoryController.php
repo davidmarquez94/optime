@@ -14,9 +14,8 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component
  */
 class CategoryController extends Controller
 {
+    //Listar Categorías
     /**
-     * Lists all category entities.
-     *
      * @Route("/", name="category_index")
      * @Method("GET")
      */
@@ -32,7 +31,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Creates a new category entity.
+     * Nueva Categoría
      *
      * @Route("/new", name="category_new")
      * @Method({"GET", "POST"})
@@ -57,24 +56,23 @@ class CategoryController extends Controller
         ));
     }
 
+    //Activar / Desactivar Categoría
     /**
-     * Finds and displays a category entity.
-     *
-     * @Route("/{id}", name="category_show")
+     * @Route("/active/{id}", name="category_active")
      * @Method("GET")
      */
-    public function showAction(Category $category)
-    {
-        $deleteForm = $this->createDeleteForm($category);
-
-        return $this->render('category/show.html.twig', array(
-            'category' => $category,
-            'delete_form' => $deleteForm->createView(),
-        ));
+    public function activeAction(Category $category){
+        $em = $this->getDoctrine()->getManager();
+        $category = $em->getRepository('AppBundle:Category')->find($category->getId());
+        //$category->
+        ($category->getActive() == true) ? $category->setActive(false) : $category->setActive(true);
+        $em->flush();
+        ($category->getActive() == true) ? $this->addFlash("success", "La Categoría " . $category->getName() . " ha sido activada") : $this->addFlash("success", "La Categoría " . $category->getName() . " ha sido desactivada");
+        return $this->redirectToRoute('category_index');
     }
 
     /**
-     * Displays a form to edit an existing category entity.
+     * Editar categorías
      *
      * @Route("/{id}/edit", name="category_edit")
      * @Method({"GET", "POST"})
@@ -99,7 +97,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Deletes a category entity.
+     * Borrar categoría
      *
      * @Route("/{id}", name="category_delete")
      * @Method("DELETE")
@@ -119,7 +117,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Creates a form to delete a category entity.
+     * Formulario de borrado
      *
      * @param Category $category The category entity
      *
