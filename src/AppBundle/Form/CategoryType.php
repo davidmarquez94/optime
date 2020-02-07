@@ -39,9 +39,6 @@ class CategoryType extends AbstractType
                     'rows' => '2'
                 ],
                 'label' => 'Descripción'
-            ])
-            ->add('active', CheckboxType::class, [
-                'label' => 'Activo'
             ]);
     }/**
      * {@inheritdoc}

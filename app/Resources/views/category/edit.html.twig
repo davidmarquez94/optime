@@ -1,21 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
-    <h1>Category edit</h1>
+    <h1>Editar categoría</h1>
+    <br />
+    <hr />
+    <a href="{{ path('category_index') }}"> <- Regresar</a>
 
     {{ form_start(edit_form) }}
         {{ form_widget(edit_form) }}
-        <input type="submit" value="Edit" />
+        <input class="btn btn-primary" type="submit" value="Editar" />
     {{ form_end(edit_form) }}
-
-    <ul>
-        <li>
-            <a href="{{ path('category_index') }}">Back to the list</a>
-        </li>
-        <li>
-            {{ form_start(delete_form) }}
-                <input type="submit" value="Delete">
-            {{ form_end(delete_form) }}
-        </li>
-    </ul>
 {% endblock %}

@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Entity\Category;
+use AppBundle\Entity\Product;
+use Exception;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
@@ -39,24 +41,29 @@ class CategoryController extends Controller
      */
     public function newAction(Request $request)
     {
+        //Instancia de categoría
         $category = new Category();
         $form = $this->createForm('AppBundle\Form\CategoryType', $category);
         $form->handleRequest($request);
 
+        //Valida si existe un post y si pasó las validaciones de la entidad
         if ($form->isSubmitted() && $form->isValid()) {
-            $category = $form->getData();
-            $validator = $this->get('validator');
-            $errors = $validator->validate($category);
-            if(count($errors) > 0){
-                $errorsString = (string) $errors;
-                dump($errorsString);
+            try {
+                //Pasa datos al objeto
+                $category = $form->getData();
+                $em = $this->getDoctrine()->getManager();
+                $category->setActive(true);
+                $em->persist($category);
+                //Guarda categoría
+                $em->flush();
+
+                //Retorna mensaje de éxito
+                $this->addFlash("success", "La Categoría " . $category->getName() . " ha sido creada existosamente");
+                return $this->redirectToRoute('category_index');
+            } catch(Exception $e){
+                dump('Error de guardado');
                 die();
             }
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($category);
-            $em->flush();
-
-            return $this->redirectToRoute('category_show', array('id' => $category->getId()));
         }
 
         return $this->render('category/new.html.twig', array(
@@ -71,13 +78,19 @@ class CategoryController extends Controller
      * @Method("GET")
      */
     public function activeAction(Category $category){
-        $em = $this->getDoctrine()->getManager();
-        $category = $em->getRepository('AppBundle:Category')->find($category->getId());
-        //$category->
-        ($category->getActive() == true) ? $category->setActive(false) : $category->setActive(true);
-        $em->flush();
-        ($category->getActive() == true) ? $this->addFlash("success", "La Categoría " . $category->getName() . " ha sido activada") : $this->addFlash("success", "La Categoría " . $category->getName() . " ha sido desactivada");
-        return $this->redirectToRoute('category_index');
+        try {
+            $em = $this->getDoctrine()->getManager();
+            $category = $em->getRepository('AppBundle:Category')->find($category->getId());
+            //$category->
+            ($category->getActive() == true) ? $category->setActive(false) : $category->setActive(true);
+            $em->flush();
+            ($category->getActive() == true) ? $this->addFlash("success", "La Categoría " . $category->getName() . " ha sido activada") : $this->addFlash("success", "La Categoría " . $category->getName() . " ha sido desactivada");
+            return $this->redirectToRoute('category_index');
+        } catch (Exception $e) {
+            dump('Error de guardado');
+            die();
+        }
+        
     }
 
     /**
@@ -93,9 +106,14 @@ class CategoryController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('category_edit', array('id' => $category->getId()));
+            try {
+                $this->getDoctrine()->getManager()->flush();
+                $this->addFlash("success", "La Categoría " . $category->getName() . " ha sido editada existosamente");
+                return $this->redirectToRoute('category_index');
+            } catch (Exception $e){
+                dump('Error de guardado');
+                die();
+            }
         }
 
         return $this->render('category/edit.html.twig', array(
@@ -106,38 +124,29 @@ class CategoryController extends Controller
     }
 
     /**
+     * 
      * Borrar categoría
-     *
-     * @Route("/{id}", name="category_delete")
-     * @Method("DELETE")
+     * @Route("/{id}/destroy", name="category_destroy")
+     * @Method("GET")
      */
-    public function deleteAction(Request $request, Category $category)
-    {
-        $form = $this->createDeleteForm($category);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->remove($category);
-            $em->flush();
+    public function destroyAction($id){
+        $em = $this->getDoctrine()->getManager();
+        $category = $em->getRepository('AppBundle:Category')->find($id);
+        if($category != null){
+            $repository = $this->getDoctrine()->getRepository(Product::class);
+            $products = $repository->createQueryBuilder('product')
+                ->where('product.categoryId = :id')
+                ->setParameter('id', $category->getId())
+                ->getQuery()->execute();
+            if(count($products) == 0){
+                $em->remove($category);
+                $em->flush();
+                $this->addFlash("success", "La Categoría " . $category->getName() . " ha sido eliminada existosamente");
+                return $this->redirectToRoute('category_index');
+            } else {
+                $this->addFlash("error", "La Categoría " . $category->getName() . " tiene productos asociados, y no es posible borrarla");
+                return $this->redirectToRoute('category_index');
+            }
         }
-
-        return $this->redirectToRoute('category_index');
-    }
-
-    /**
-     * Formulario de borrado
-     *
-     * @param Category $category The category entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Category $category)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('category_delete', array('id' => $category->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
     }
 }

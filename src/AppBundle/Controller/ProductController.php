@@ -45,33 +45,23 @@ class ProductController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $product = $form->getData();
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($product);
-            $em->flush();
+            try {
+                $product = $form->getData();
+                $em = $this->getDoctrine()->getManager();
+                $em->persist($product);
+                $em->flush();
 
-            return $this->redirectToRoute('product_show', array('id' => $product->getId()));
+                $this->addFlash("success", "El producto " . $product->getName() . " ha sido creado existosamente");
+                return $this->redirectToRoute('product_index');
+            } catch (Exception $e){
+                dump('Error de guardado');
+                die();
+            }
         }
 
         return $this->render('product/new.html.twig', array(
             'product' => $product,
             'form' => $form->createView(),
-        ));
-    }
-
-    /**
-     * Finds and displays a product entity.
-     *
-     * @Route("/{id}", name="product_show")
-     * @Method("GET")
-     */
-    public function showAction(Product $product)
-    {
-        $deleteForm = $this->createDeleteForm($product);
-
-        return $this->render('product/show.html.twig', array(
-            'product' => $product,
-            'delete_form' => $deleteForm->createView(),
         ));
     }
 
@@ -88,9 +78,14 @@ class ProductController extends Controller
         $editForm->handleRequest($request);
 
         if ($editForm->isSubmitted() && $editForm->isValid()) {
-            $this->getDoctrine()->getManager()->flush();
-
-            return $this->redirectToRoute('product_edit', array('id' => $product->getId()));
+            try {
+                $this->getDoctrine()->getManager()->flush();
+                $this->addFlash("success", "El producto " . $product->getName() . " ha sido editado existosamente");
+                return $this->redirectToRoute('product_index');
+            } catch (Exception $e){
+                dump('Error de guardado');
+                die();
+            }
         }
 
         return $this->render('product/edit.html.twig', array(
@@ -101,38 +96,19 @@ class ProductController extends Controller
     }
 
     /**
-     * Deletes a product entity.
-     *
-     * @Route("/{id}", name="product_delete")
-     * @Method("DELETE")
+     * 
+     * Borrar categoría
+     * @Route("/{id}/destroy", name="product_destroy")
+     * @Method("GET")
      */
-    public function deleteAction(Request $request, Product $product)
-    {
-        $form = $this->createDeleteForm($product);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+    public function destroyAction($id){
+        $em = $this->getDoctrine()->getManager();
+        $product = $em->getRepository('AppBundle:Product')->find($id);
+        if($product != null){
             $em->remove($product);
             $em->flush();
+            $this->addFlash("success", "El producto " . $product->getName() . " ha sido eliminado existosamente");
+            return $this->redirectToRoute('product_index');
         }
-
-        return $this->redirectToRoute('product_index');
-    }
-
-    /**
-     * Creates a form to delete a product entity.
-     *
-     * @param Product $product The product entity
-     *
-     * @return \Symfony\Component\Form\Form The form
-     */
-    private function createDeleteForm(Product $product)
-    {
-        return $this->createFormBuilder()
-            ->setAction($this->generateUrl('product_delete', array('id' => $product->getId())))
-            ->setMethod('DELETE')
-            ->getForm()
-        ;
     }
 }

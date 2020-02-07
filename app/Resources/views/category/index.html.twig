@@ -37,6 +37,7 @@
                 <td>
                     <a class="btn btn-primary" href="{{ path('category_active', { 'id': category.id }) }}">Activar / Desactivar</a>
                     <a class="btn btn-primary" href="{{ path('category_edit', { 'id': category.id }) }}">Editar</a>
+                    <a class="btn btn-danger" href="{{ path('category_destroy', { 'id': category.id }) }}">Eliminar</a>
                 </td>
             </tr>
         {% endfor %}

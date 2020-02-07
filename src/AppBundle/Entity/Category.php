@@ -52,7 +52,7 @@ class Category
      * @Assert\Regex(
      *     pattern     = "/^[a-z]+$/i",
      *     htmlPattern = "^[a-zA-Z]+$",
-     *     message="El código no puede contener caracteres especiales"
+     *     message="El código no puede contener espacios ni caracteres especiales"
      * )
      */
     private $code;
@@ -65,7 +65,7 @@ class Category
      * @Assert\Regex(
      *     pattern     = "/^[a-z]+$/i",
      *     htmlPattern = "^[a-zA-Z]+$",
-     *     message="El código no puede contener caracteres especiales"
+     *     message="El nombre no puede contener espacios ni caracteres especiales"
      * )
      */
     private $name;
