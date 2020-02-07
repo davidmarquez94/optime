@@ -37,7 +37,7 @@
                 <td>
                     <a class="btn btn-primary" href="{{ path('category_active', { 'id': category.id }) }}">Activar / Desactivar</a>
                     <a class="btn btn-primary" href="{{ path('category_edit', { 'id': category.id }) }}">Editar</a>
-                    <a class="btn btn-danger" href="{{ path('category_destroy', { 'id': category.id }) }}">Eliminar</a>
+                    <a class="btn btn-danger" href="#" onclick="return prevDelete('{{ category.name }}', '{{ path('category_destroy', { 'id': category.id }) }}');">Eliminar</a>
                 </td>
             </tr>
         {% endfor %}
@@ -51,5 +51,24 @@
         $(document).ready( function () {
             $('#categories-table').DataTable();
         } );
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9"></script>
+    <script>
+        function prevDelete(name, route){
+            Swal.fire({
+                title: '¿Está seguro?',
+                text: "Está a punto de borrar la categoría " + name + ". Esta es una acción que no podrá revertir si confirma",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Borrar',
+                cancelButtonText: 'Cancelar',
+                }).then((result) => {
+                if (result.value) {
+                    window.location.replace(route)
+                }
+            })
+        }        
     </script>
 {% endblock %}

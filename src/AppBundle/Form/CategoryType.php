@@ -16,6 +16,7 @@ class CategoryType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        //Definiendo campos del formulario
         $builder->add('code', TextType::class, [
                 'attr' => [
                     'class' => 'form-control',

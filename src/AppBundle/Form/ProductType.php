@@ -2,6 +2,7 @@
 
 namespace AppBundle\Form;
 
+use Doctrine\ORM\EntityRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,6 +18,7 @@ class ProductType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        //Definiendo campos del formulario
         $builder->add('code', TextType::class, [
                 'attr' => [
                     'class' => 'form-control',
@@ -59,6 +61,13 @@ class ProductType extends AbstractType
             ])
             ->add('category', EntityType::class, [
                 'class' => 'AppBundle:Category',
+                //Filtrando por categorías activas
+                'query_builder' => function(EntityRepository $er) {
+                    return $er->createQueryBuilder('category')
+                        ->where('category.active = :true')
+                        ->setParameter('true', '1')
+                        ->orderBy('category.id', 'ASC');
+                },
                 'label' => 'Categoría',
                 'attr' => [
                     'class' => 'form-control',
