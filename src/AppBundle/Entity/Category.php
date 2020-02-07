@@ -2,7 +2,9 @@
 
 namespace AppBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\OneToMany;
 
 /**
  * Category
@@ -12,6 +14,15 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Category
 {
+    /**
+     * @OneToMany(targetEntity="Product", mappedBy="category")
+     */
+    private $products;
+
+    public function __construct()
+    {
+        $this->products = new ArrayCollection();
+    }
     /**
      * @var int
      *
@@ -154,6 +165,14 @@ class Category
     public function getActive()
     {
         return $this->active;
+    }
+
+    public function getProducts(){
+        return $this->products;
+    }
+
+    public function __toString(){
+        return $this->name;
     }
 }
 

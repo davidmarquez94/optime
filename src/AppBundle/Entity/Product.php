@@ -1,6 +1,8 @@
 <?php
 
 namespace AppBundle\Entity;
+use Doctrine\ORM\Mapping\ManyToOne;
+use Doctrine\ORM\Mapping\JoinColumn;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -12,6 +14,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Product
 {
+    /**
+     * @ManyToOne(targetEntity="Category", inversedBy="products")
+     * @JoinColumn(name="category_id", referencedColumnName="id")
+     */
+    private $category;
     /**
      * @var int
      *
@@ -216,6 +223,10 @@ class Product
     public function getCategoryId()
     {
         return $this->categoryId;
+    }
+
+    public function getCategory(){
+        return $this->category;
     }
 }
 
