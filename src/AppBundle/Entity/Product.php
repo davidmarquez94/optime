@@ -5,12 +5,24 @@ use Doctrine\ORM\Mapping\ManyToOne;
 use Doctrine\ORM\Mapping\JoinColumn;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Product
  *
  * @ORM\Table(name="product")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\ProductRepository")
+ * @UniqueEntity(
+ *  fields={"code"},
+ *  errorPath="code",
+ *  message="Este código ya está registrado en la base de datos",
+ * )
+ * @UniqueEntity(
+ *  fields={"name"},
+ *  errorPath="name",
+ *  message="Este nombre ya está registrado en la base de datos",
+ * )
  */
 class Product
 {
@@ -32,6 +44,12 @@ class Product
      * @var string
      *
      * @ORM\Column(name="code", type="string", length=255, unique=true)
+     * @Assert\NotNull
+     * @Assert\Regex(
+     *     pattern     = "/^[a-z]+$/i",
+     *     htmlPattern = "^[a-zA-Z]+$",
+     *     message="Valor no aceptado"
+     * )
      */
     private $code;
 
@@ -39,6 +57,11 @@ class Product
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Assert\NotNull
+     * @Assert\Regex(
+     *     pattern     = "/^[a-z]+$/i",
+     *     htmlPattern = "^[a-zA-Z]+$"
+     * )
      */
     private $name;
 

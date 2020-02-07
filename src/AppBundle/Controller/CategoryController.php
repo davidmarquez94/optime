@@ -6,6 +6,7 @@ use AppBundle\Entity\Category;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Category controller.
@@ -43,6 +44,14 @@ class CategoryController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $category = $form->getData();
+            $validator = $this->get('validator');
+            $errors = $validator->validate($category);
+            if(count($errors) > 0){
+                $errorsString = (string) $errors;
+                dump($errorsString);
+                die();
+            }
             $em = $this->getDoctrine()->getManager();
             $em->persist($category);
             $em->flush();

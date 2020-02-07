@@ -1,5 +1,9 @@
 {% extends 'base.html.twig' %}
 
+{% block header_scripts %}
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+{% endblock %}
+
 {% block body %}
     <h1>Categorías</h1>
     <br />
@@ -13,7 +17,7 @@
     <br />
     <a class="btn btn-primary" href="{{ path('category_new') }}">Nueva categoría</a>
     <hr />
-    <table class="table table-hover">
+    <table class="table table-hover" id="categories-table">
         <thead>
             <tr>
                 <th>Código</th>
@@ -38,4 +42,13 @@
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+
+{% block footer_scripts %}
+    <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready( function () {
+            $('#categories-table').DataTable();
+        } );
+    </script>
 {% endblock %}

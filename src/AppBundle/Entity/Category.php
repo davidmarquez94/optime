@@ -5,12 +5,24 @@ namespace AppBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\OneToMany;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Category
  *
  * @ORM\Table(name="category")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\CategoryRepository")
+ * @UniqueEntity(
+ *  fields={"code"},
+ *  errorPath="code",
+ *  message="Este código ya está registrado en la base de datos",
+ * )
+ * @UniqueEntity(
+ *  fields={"name"},
+ *  errorPath="name",
+ *  message="Este nombre ya está registrado en la base de datos",
+ * )
  */
 class Category
 {
@@ -36,6 +48,12 @@ class Category
      * @var string
      *
      * @ORM\Column(name="code", type="string", length=255, unique=true)
+     * @Assert\NotNull
+     * @Assert\Regex(
+     *     pattern     = "/^[a-z]+$/i",
+     *     htmlPattern = "^[a-zA-Z]+$",
+     *     message="El código no puede contener caracteres especiales"
+     * )
      */
     private $code;
 
@@ -43,6 +61,12 @@ class Category
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, unique=true)
+     * @Assert\NotNull
+     * @Assert\Regex(
+     *     pattern     = "/^[a-z]+$/i",
+     *     htmlPattern = "^[a-zA-Z]+$",
+     *     message="El código no puede contener caracteres especiales"
+     * )
      */
     private $name;
 

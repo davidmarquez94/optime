@@ -1,12 +1,16 @@
 {% extends 'base.html.twig' %}
 
+{% block header_scripts %}
+    <link rel="stylesheet" href="//cdn.datatables.net/1.10.20/css/jquery.dataTables.min.css">
+{% endblock %}
+
 {% block body %}
     <h1>Productos</h1>
     <hr />
     <a class="btn btn-primary" href="{{ path('product_new') }}">Create a new product</a>
     <br />
     <br />
-    <table class="table table-hover">
+    <table class="table table-hover" id="products-table">
         <thead>
             <tr>
                 <th>Código</th>
@@ -28,17 +32,19 @@
                 <td>{{ product.price }}</td>
                 <td>{{ product.category.name }}</td>
                 <td>
-                    <ul>
-                        <li>
-                            <a href="{{ path('product_show', { 'id': product.id }) }}">show</a>
-                        </li>
-                        <li>
-                            <a href="{{ path('product_edit', { 'id': product.id }) }}">edit</a>
-                        </li>
-                    </ul>
+                    <a class="btn btn-primary" href="{{ path('product_edit', { 'id': product.id }) }}">Editar</a>
                 </td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
+{% endblock %}
+
+{% block footer_scripts %}
+    <script src="//cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
+    <script>
+        $(document).ready( function () {
+            $('#products-table').DataTable();
+        } );
+    </script>
 {% endblock %}
